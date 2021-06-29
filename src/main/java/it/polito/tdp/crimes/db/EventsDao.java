@@ -10,8 +10,6 @@ import java.util.List;
 
 import it.polito.tdp.crimes.model.Event;
 
-
-
 public class EventsDao {
 	
 	public List<Event> listAllEvents(){
@@ -49,6 +47,135 @@ public class EventsDao {
 			
 			conn.close();
 			return list ;
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null ;
+		}
+	}
+	
+	public List<Integer> getYears() {
+		String sql = "SELECT DISTINCT YEAR(reported_date) AS anno "
+				+ "FROM events "
+				+ "ORDER BY anno" ;
+		try {
+			Connection conn = DBConnect.getConnection() ;
+
+			PreparedStatement st = conn.prepareStatement(sql) ;
+			
+			List<Integer> list = new ArrayList<>() ;
+			
+			ResultSet res = st.executeQuery() ;
+			
+			while(res.next()) {
+				try {
+					list.add(res.getInt("anno"));
+				} catch (Throwable t) {
+					t.printStackTrace();
+				}
+			}
+			
+			conn.close();
+			return list ;
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null ;
+		}
+	}
+
+	public List<Integer> getDistricts() {
+		String sql = "SELECT DISTINCT district_id "
+				+ "FROM events" ;
+		try {
+			Connection conn = DBConnect.getConnection() ;
+
+			PreparedStatement st = conn.prepareStatement(sql) ;
+			
+			List<Integer> list = new ArrayList<>() ;
+			
+			ResultSet res = st.executeQuery() ;
+			
+			while(res.next()) {
+				try {
+					list.add(res.getInt("district_id"));
+				} catch (Throwable t) {
+					t.printStackTrace();
+				}
+			}
+			
+			conn.close();
+			return list ;
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null ;
+		}
+	}
+	
+	public Double getLonMedia(Integer anno, Integer distretto) {
+		String sql = "SELECT AVG(geo_lon) AS lon "
+				+ "FROM events "
+				+ "WHERE YEAR(reported_date) = ?  "
+				+ "AND district_id = ?" ;
+		try {
+			Connection conn = DBConnect.getConnection() ;
+
+			PreparedStatement st = conn.prepareStatement(sql) ;
+			st.setInt(1, anno);
+			st.setInt(2, distretto);
+			
+			Double lon = null;
+			
+			ResultSet res = st.executeQuery() ;
+			
+			while(res.next()) {
+				try {
+					lon = res.getDouble("lon");
+				} catch (Throwable t) {
+					t.printStackTrace();
+				}
+			}
+			
+			conn.close();
+			return lon ;
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null ;
+		}
+	}
+	
+	public Double getLatMedia(Integer anno, Integer distretto) {
+		String sql = "SELECT AVG(geo_lat) AS lat "
+				+ "FROM events "
+				+ "WHERE YEAR(reported_date) = ?  "
+				+ "AND district_id = ?" ;
+		try {
+			Connection conn = DBConnect.getConnection() ;
+
+			PreparedStatement st = conn.prepareStatement(sql) ;
+			st.setInt(1, anno);
+			st.setInt(2, distretto);
+			
+			Double lat = null;
+			
+			ResultSet res = st.executeQuery() ;
+			
+			while(res.next()) {
+				try {
+					lat = res.getDouble("lat");
+				} catch (Throwable t) {
+					t.printStackTrace();
+				}
+			}
+			
+			conn.close();
+			return lat ;
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
