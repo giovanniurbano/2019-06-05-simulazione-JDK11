@@ -84,4 +84,11 @@ public class Model {
 		return grafo;
 	}
 	
+	public List<Event> listAllEventsByDate(Integer anno, Integer mese, Integer giorno){
+		return this.dao.listAllEventsByDate(anno, mese, giorno);
+	}
+	
+	public Integer getDistrettoMenoCrimini(Integer anno) {
+		return this.dao.getDistrettoMenoCrimini(anno);
+	}
 }

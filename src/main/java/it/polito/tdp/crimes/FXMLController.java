@@ -81,6 +81,11 @@ public class FXMLController {
     		this.txtResult.appendText("Creare prima il grafo!");
     		return;
     	}
+    	Integer anno = this.boxAnno.getValue();
+    	if(anno == null) {
+    		this.txtResult.appendText("Scegliere un anno!");
+    		return;
+    	}
     	Integer mese = this.boxMese.getValue();
     	if(mese == null) {
     		this.txtResult.appendText("Scegliere un mese!");

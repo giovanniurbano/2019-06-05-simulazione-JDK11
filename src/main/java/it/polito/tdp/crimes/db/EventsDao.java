@@ -12,12 +12,20 @@ import it.polito.tdp.crimes.model.Event;
 
 public class EventsDao {
 	
-	public List<Event> listAllEvents(){
-		String sql = "SELECT * FROM events" ;
+	public List<Event> listAllEventsByDate(Integer anno, Integer mese, Integer giorno){
+		String sql = "SELECT * "
+				+ "FROM EVENTS "
+				+ "WHERE YEAR(reported_date) = ?  "
+				+ "AND MONTH(reported_date) = ? "
+				+ "AND DAY(reported_date) = ? "
+				+ "ORDER BY reported_date" ;
 		try {
 			Connection conn = DBConnect.getConnection() ;
 
 			PreparedStatement st = conn.prepareStatement(sql) ;
+			st.setInt(1, anno);
+			st.setInt(2, mese);
+			st.setInt(3, giorno);
 			
 			List<Event> list = new ArrayList<>() ;
 			
@@ -250,4 +258,38 @@ public class EventsDao {
 		}
 	}
 
+	public Integer getDistrettoMenoCrimini(Integer anno) {
+		String sql = "SELECT district_id "
+				+ "FROM events "
+				+ "WHERE YEAR(reported_date) = ? "
+				+ "GROUP BY district_id "
+				+ "ORDER BY COUNT(*) ASC "
+				+ "LIMIT 1" ;
+		try {
+			Connection conn = DBConnect.getConnection() ;
+
+			PreparedStatement st = conn.prepareStatement(sql) ;
+			st.setInt(1, anno);
+			
+			Integer d = null;
+			
+			ResultSet res = st.executeQuery() ;
+			
+			while(res.next()) {
+				try {
+					d = res.getInt("district_id");
+				} catch (Throwable t) {
+					t.printStackTrace();
+				}
+			}
+			
+			conn.close();
+			return d ;
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null ;
+		}
+	}
 }
