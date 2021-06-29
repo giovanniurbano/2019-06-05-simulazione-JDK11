@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.crimes.model.Model;
+import it.polito.tdp.crimes.model.Simulator;
 import it.polito.tdp.crimes.model.Vicino;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -77,6 +78,8 @@ public class FXMLController {
 
     @FXML
     void doSimula(ActionEvent event) {
+    	this.txtResult.clear();
+    	
     	if(this.model.getGrafo() == null) {
     		this.txtResult.appendText("Creare prima il grafo!");
     		return;
@@ -104,6 +107,9 @@ public class FXMLController {
         		return;
     		}
     		
+    		Simulator sim = new Simulator(this.model, anno, mese, giorno, n);
+    		sim.run();
+    		this.txtResult.appendText("Crimini mal gestiti: " + sim.getnEvMalGestiti());
     	}
     	catch(NumberFormatException nfe) {
     		this.txtResult.appendText("Inserire un N intero!");

@@ -3,7 +3,6 @@ package it.polito.tdp.crimes.model;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.time.temporal.TemporalAmount;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,10 +21,6 @@ public class Simulator {
 	
 	//parametri di input
 	private Model model;
-	private Integer anno;
-	private Integer mese;
-	private Integer giorno;
-	private int N;
 	private int vel = 60; //km/h
 	private double probAOC = 0.5;
 	
@@ -34,10 +29,6 @@ public class Simulator {
 	
 	public Simulator(Model model, Integer anno, Integer mese, Integer giorno, int N) {
 		this.model = model;
-		this.anno = anno;
-		this.mese = mese;
-		this.giorno = giorno;
-		this.N = N;
 		
 		Integer distrettoIniziale = this.model.getDistrettoMenoCrimini(anno);
 		this.intervento = new HashMap<Poliziotto, Event>();
@@ -59,6 +50,7 @@ public class Simulator {
 		while(!this.queue.isEmpty()) {
 			Evento e = this.queue.poll();
 			this.processEvent(e);
+			System.out.println(e);
 		}
 	}
 
@@ -72,14 +64,26 @@ public class Simulator {
 					break;
 				}
 			}
-			DefaultWeightedEdge arco = this.model.getGrafo().getEdge(e.getCrimine().getDistrict_id(), pm.getDistretto());
-			Double distanza = this.model.getGrafo().getEdgeWeight(arco);
-			TemporalAmount tempoPerArrivare = Duration.ofHours((long) (distanza/this.vel));
-			LocalTime a = e.getT().plus(tempoPerArrivare);
+			if(pm != null) {
+				DefaultWeightedEdge arco = this.model.getGrafo().getEdge(e.getCrimine().getDistrict_id(), pm.getDistretto());
+				Double distanza = this.model.getGrafo().getEdgeWeight(arco);
+				LocalTime a = e.getT().plusHours((long) (distanza/this.vel));
+				
+				if(a.isAfter(e.getT().plusMinutes(15))) {
+					this.queue.add(new Evento(a, TipoEvento.MAL_GESTITO, e.getCrimine(), pm));
+				}
+				
+				this.queue.add(new Evento(a, TipoEvento.INTERVENTO, e.getCrimine(), pm));
+				pm.setDistretto(e.getCrimine().getDistrict_id());
+				pm.setLibero(false);
+				this.intervento.replace(pm, e.getCrimine());
+			}
+			else {
+				this.queue.add(new Evento(e.getT(), TipoEvento.MAL_GESTITO, e.getCrimine(), pm));
+			}
+			break;
 			
-			this.queue.add(new Evento(a, TipoEvento.INTERVENTO, e.getCrimine(), pm));
-			pm.setLibero(false);
-			
+		case INTERVENTO:
 			TemporalAmount tempoIntervento = null;
 			if(e.getCrimine().getOffense_category_id().equals("all-other-crimes")) {
 				double p = Math.random();
@@ -91,18 +95,23 @@ public class Simulator {
 			else
 				tempoIntervento = Duration.ofHours(2);
 			
-			this.queue.add(new Evento(a.plus(tempoIntervento), TipoEvento.POL_LIBERO, null, pm));
+			this.queue.add(new Evento(e.getT().plus(tempoIntervento), TipoEvento.POL_LIBERO, null, e.getPoliziotto()));
 			break;
-		case INTERVENTO:
-			break;
+			
 		case POL_LIBERO:
 			e.getPoliziotto().setLibero(true);
 			break;
+			
 		case MAL_GESTITO:
 			this.nEvMalGestiti++;
+			if(e.getPoliziotto() != null)
+				this.queue.add(new Evento(e.getT().plusMinutes(1), TipoEvento.POL_LIBERO, null, e.getPoliziotto()));
 			break;
 		}
 	}
-	
+
+	public int getnEvMalGestiti() {
+		return nEvMalGestiti;
+	}
 	
 }

@@ -28,6 +28,29 @@ public class Poliziotto {
 	public void setLibero(boolean libero) {
 		this.libero = libero;
 	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((nPol == null) ? 0 : nPol.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Poliziotto other = (Poliziotto) obj;
+		if (nPol == null) {
+			if (other.nPol != null)
+				return false;
+		} else if (!nPol.equals(other.nPol))
+			return false;
+		return true;
+	}
 	
 	
 	
