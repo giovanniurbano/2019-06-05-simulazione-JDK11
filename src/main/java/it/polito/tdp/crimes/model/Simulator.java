@@ -65,9 +65,14 @@ public class Simulator {
 				}
 			}
 			if(pm != null) {
-				DefaultWeightedEdge arco = this.model.getGrafo().getEdge(e.getCrimine().getDistrict_id(), pm.getDistretto());
-				Double distanza = this.model.getGrafo().getEdgeWeight(arco);
-				LocalTime a = e.getT().plusHours((long) (distanza/this.vel));
+				Double distanza = null;
+				if(e.getCrimine().getDistrict_id() != pm.getDistretto()) {
+					DefaultWeightedEdge arco = this.model.getGrafo().getEdge(e.getCrimine().getDistrict_id(), pm.getDistretto());
+					distanza = this.model.getGrafo().getEdgeWeight(arco);
+				}
+				else
+					distanza = 0.0;
+				LocalTime a = e.getT().plusSeconds((long) ((distanza*1000)/(this.vel/3.6)));
 				
 				if(a.isAfter(e.getT().plusMinutes(15))) {
 					this.queue.add(new Evento(a, TipoEvento.MAL_GESTITO, e.getCrimine(), pm));
