@@ -91,7 +91,7 @@ public class Simulator {
 			else
 				tempoIntervento = Duration.ofHours(2);
 			
-			this.queue.add(new Evento(tempoIntervento, TipoEvento.POL_LIBERO, null, pm));
+			this.queue.add(new Evento(a.plus(tempoIntervento), TipoEvento.POL_LIBERO, null, pm));
 			break;
 		case INTERVENTO:
 			break;
