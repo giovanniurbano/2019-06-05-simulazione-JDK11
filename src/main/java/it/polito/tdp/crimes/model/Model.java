@@ -72,4 +72,16 @@ public class Model {
 		return this.vicini;
 	}
 	
+	public List<Integer> getMonths(Integer anno) {
+		return this.dao.getMonths(anno);
+	}
+	
+	public List<Integer> getDays(Integer anno) {
+		return this.dao.getDays(anno);
+	}
+
+	public Graph<Integer, DefaultWeightedEdge> getGrafo() {
+		return grafo;
+	}
+	
 }

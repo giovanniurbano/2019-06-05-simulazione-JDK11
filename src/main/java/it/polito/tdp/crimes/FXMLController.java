@@ -31,10 +31,10 @@ public class FXMLController {
     private ComboBox<Integer> boxAnno; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxMese"
-    private ComboBox<?> boxMese; // Value injected by FXMLLoader
+    private ComboBox<Integer> boxMese; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxGiorno"
-    private ComboBox<?> boxGiorno; // Value injected by FXMLLoader
+    private ComboBox<Integer> boxGiorno; // Value injected by FXMLLoader
 
     @FXML // fx:id="btnCreaReteCittadina"
     private Button btnCreaReteCittadina; // Value injected by FXMLLoader
@@ -51,6 +51,9 @@ public class FXMLController {
     @FXML
     void doCreaReteCittadina(ActionEvent event) {
     	this.txtResult.clear();
+    	this.boxMese.getItems().clear();
+    	this.boxGiorno.getItems().clear();
+    	this.txtN.clear();
     	
     	Integer anno = this.boxAnno.getValue();
     	if(anno == null) {
@@ -67,11 +70,40 @@ public class FXMLController {
     			this.txtResult.appendText(v + "\n");
     		}
     	}
+    	
+    	this.boxMese.getItems().addAll(this.model.getMonths(anno));
+    	this.boxGiorno.getItems().addAll(this.model.getDays(anno));
     }
 
     @FXML
     void doSimula(ActionEvent event) {
-
+    	if(this.model.getGrafo() == null) {
+    		this.txtResult.appendText("Creare prima il grafo!");
+    		return;
+    	}
+    	Integer mese = this.boxMese.getValue();
+    	if(mese == null) {
+    		this.txtResult.appendText("Scegliere un mese!");
+    		return;
+    	}
+    	Integer giorno = this.boxGiorno.getValue();
+    	if(giorno == null) {
+    		this.txtResult.appendText("Scegliere un giorno!");
+    		return;
+    	}
+    	String nS = this.txtN.getText();
+    	try {
+    		int n = Integer.parseInt(nS);
+    		if(n < 1 || n > 10) {
+    			this.txtResult.appendText("Inserire un N compreso tra 1 e 10!");
+        		return;
+    		}
+    		
+    	}
+    	catch(NumberFormatException nfe) {
+    		this.txtResult.appendText("Inserire un N intero!");
+    		return;
+    	}
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
