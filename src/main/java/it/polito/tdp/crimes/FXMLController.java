@@ -5,9 +5,12 @@
 package it.polito.tdp.crimes;
 
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.crimes.model.Model;
+import it.polito.tdp.crimes.model.Vicino;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -56,6 +59,14 @@ public class FXMLController {
     	}
     	String msg = this.model.creaGrafo(anno);
     	this.txtResult.appendText(msg);
+    	
+    	Map<Integer, List<Vicino>> vicini = this.model.getVicini();
+    	for(Integer d : vicini.keySet()) {
+    		this.txtResult.appendText("\nDistretto " + d + ":\n");
+    		for(Vicino v : vicini.get(d)) {
+    			this.txtResult.appendText(v + "\n");
+    		}
+    	}
     }
 
     @FXML
